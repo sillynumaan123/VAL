@@ -7,8 +7,9 @@ import java.io.IOException;
 class start { //{"platformGameId": "val:05c91cd4-ac8e-47c9-961d-503a4f2b7160",
     static StringBuilder str = new StringBuilder();
     static String gameId = "\"val:05c91cd4-ac8e-47c9-961d-503a4f2b7160\"";
-    static String skp = "{\"platformGameId\": ".length()+gameId+", \"";
-    static String file = "DATA/GAME1.json";
+    static String skp = "{\"platformGameId\": "+gameId+", \"";
+    static String file = "GAME1.json";
+    static boolean configCreated = false;
     void readFile(){
         try(BufferedReader br = new BufferedReader(new FileReader(file))) {
             String z;
@@ -34,14 +35,14 @@ class start { //{"platformGameId": "val:05c91cd4-ac8e-47c9-961d-503a4f2b7160",
         return evName;
     }
 
-    public int getLastIndexOf(int index) {
+    public static int getLastIndexOf(int index) {
         int bCount = 0;
         for(int i = index;i<str.length();i++) {
             if(str.charAt(i)=='{') 
                 bCount++;
             if(str.charAt(i)=='}') {
-                if(bCount==0) return i;
                 bCount--;
+                if(bCount==0) return i;
             }
         }
         return index;
@@ -49,9 +50,15 @@ class start { //{"platformGameId": "val:05c91cd4-ac8e-47c9-961d-503a4f2b7160",
 
     void extractData(String name, int FI) {
         String[] req = {"playerDied", "abilityUsed", "damageEvent", "configuration"};
-        if(name==req[0]) {
-            int LI = getLastIndexOf(FI);
-        }
+        int LI = getLastIndexOf(FI);
+        DataReader datareader = new DataReader(str.substring(FI,LI));
+        if(name.equals(req[0])) datareader.playerDied();
+        if(name.equals(req[1])) datareader.abilityUsed();
+        if(name.equals(req[2])) datareader.damageEvent();
+        if(name.equals(req[3])&&configCreated==false) {
+            datareader.configuration();
+            configCreated = true;
+        }           
     }
 
     public static void main(String args[]) {
