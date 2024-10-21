@@ -3,9 +3,9 @@ import java.util.*;
 import java.io.*;
 public class PlayerData {
     static String str;
-    static int teamId1, teamId2;
-    public record Player(int num, String name, String agent) {}
-    List<Player> PLAYERS = new ArrayList<>();
+    static String teamId1, teamId2;
+    public record P(int num, String name, String agent) {}
+    List<P> PLAYERS = new ArrayList<>();
     public PlayerData(String abc) {
         str = abc;
         readPlayerList();
@@ -46,13 +46,12 @@ public class PlayerData {
         start = str.indexOf("\"players\": [")+"\"players\": [".length();
         int end = str.indexOf("]",start);
         String newstr = str.substring(start-1,end+1);
-        System.out.println(newstr);
         String[] playerDataArray = newstr.split("\\},\\s*\\{");
         for (String playerData : playerDataArray) {
             int num = Integer.parseInt(playerData.replaceAll(".*\"playerId\": \\{\"value\": ", "").replaceAll("\\}.*", ""));
             String name = playerData.replaceAll(".*\"displayName\": \"", "").replaceAll("\",.*", "");
             String agent = playerData.replaceAll(".*\"guid\": \"", "").replaceAll("\",.*", "");
-            PLAYERS.add(new Player(num, name, AgentGUIDmap.get(agent.toLowerCase())));
+            PLAYERS.add(new P(num, name, AgentGUIDmap.get(agent.toLowerCase())));
         }
         System.out.println(PLAYERS);
     }

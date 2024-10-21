@@ -1,46 +1,46 @@
 package MAIN;
-
+import java.util.*;
 public class DataReader {
     static String str;
     public DataReader(String abc ) {
         str = abc;
     }
+    public record PD_playerDied(String victim, String killer, String assistants, String weapon,String round) {}
+    public static List<PD_playerDied> PD = new ArrayList<>();
+    public record AU_abilityUsed(String user, String ability, String round) {}
+    public static List<AU_abilityUsed> AU = new ArrayList<>();
+    public record DE_damageEvent(String cause, String victim, String location, String AbWe, String amt, String round) {}
+    public static List<DE_damageEvent> DE = new ArrayList<>();
     public void playerDied() {
-        /* System.out.println(str);
-        System.out.println(keytoValue("\"deceasedId\": {\"value\": "));
-        System.out.println(keytoValue("\"killerId\": {\"value\": "));
-        System.out.println(assistants());
-        System.out.println(largeKeytoValue("\"weapon\": ", "\"guid\": \""));//for weaponGUID */
+        String PD1 = keytoValue("\"deceasedId\": {\"value\": ");
+        String PD2 = keytoValue("\"killerId\": {\"value\": ");
+        String PD3 = assistants();
+        String PD4 = largeKeytoValue("\"weapon\": ", "\"guid\": \"");//for weaponGUID */
+        String PD5 = largeKeytoValue("\"currentGamePhase\": ", "\"roundNumber\": ");
+        PD.add(new PD_playerDied(PD1, PD2, PD3, PD4, PD5));
     }
-    public void abilityUsed() { 
-        /*
-        System.out.println(str);
-        System.out.println(keytoValue("\"playerId\": {\"value\": "));
-        System.out.println(largeKeytoValue("\"ability\": ","\"slot\": \""));//for abilitySLOT
-        System.out.println(largeKeytoValue("\"currentGamePhase\": ", "\"roundNumber\": ")); */
+    public void abilityUsed() {
+        String AU1 = keytoValue("\"playerId\": {\"value\": ");
+        String AU2 = largeKeytoValue("\"ability\": ","\"slot\": \"");//for abilitySLOT
+        String AU3 = largeKeytoValue("\"currentGamePhase\": ", "\"roundNumber\": ");
+        AU.add(new AU_abilityUsed(AU1, AU2, AU3));
     }
     public void damageEvent() {
-        /*System.out.println(str);
-        System.out.println(keyValue("\"location\": \""));
-        System.out.println(keyValue("\"damageDealt\": "));
-        if(str.indexOf("\"hazard\"")!=-1) {
-            System.out.println(keytoValue("\"victimId\": {\"value\": "));
-            System.out.println("Self Damage");
-        }
-        else {
-            if(str.indexOf("\"weapon\"")!=-1)
-                System.out.println("W+"+largeKeytoValue("\"weapon\": ", "\"guid\": \""));
-            else if(str.indexOf("\"ability\"")!=-1)
-                System.out.println("A+"+largeKeytoValue("\"ability\": ","\"slot\": \""));
-            System.out.println(keytoValue("\"causerId\": {\"value\": "));
-        }
-        System.out.println(largeKeytoValue("\"currentGamePhase\": ", "\"roundNumber\": "));*/
+        String DE1 = str.indexOf("\"hazard\"")!=-1?"Self":keytoValue("\"causerId\": {\"value\": ");
+        String DE2 = keytoValue("\"victimId\": {\"value\": ");
+        String DE3 = keyValue("\"location\": \"");
+        String DE4 = str.indexOf("\"weapon\"")!=-1?largeKeytoValue("\"weapon\": ", "\"guid\": \""):largeKeytoValue("\"ability\": ","\"slot\": \"");
+        String DE5 = keyValue("\"damageDealt\": ");
+        String DE6 = largeKeytoValue("\"currentGamePhase\": ", "\"roundNumber\": ");
+        DE.add(new DE_damageEvent(DE1, DE2, DE3, DE4, DE5, DE6));
     }
     public void configuration() {
-        System.out.println(str);
+        /* System.out.println(str);
         PlayerData pd = new PlayerData(str); 
-
-         
+        int start = str.indexOf("\"selectedMap\": ");
+        start = str.indexOf("\"displayName\": \"",start)+"\"displayName\": \"".length();
+        int end = str.indexOf("\"",start);
+        String Map = str.substring(start,end);         */
     }
     String keyValue(String key) {
         int start = str.indexOf(key)+key.length();
@@ -53,10 +53,10 @@ public class DataReader {
         return value;
         
     }
-    int keytoValue(String s) {
+    String keytoValue(String s) {
         int start = str.indexOf(s)+s.length();
         int end = str.indexOf("}",start);
-        int value = Integer.parseInt(str.substring(start,end));
+        String value = str.substring(start,end);
         str = str.replace(s+value+"}","");
         return value;
     }
@@ -70,7 +70,6 @@ public class DataReader {
         else end = newstr.indexOf("\"",start)>newstr.indexOf("}",start)?newstr.indexOf("}",start):newstr.indexOf("\"",start);
         String value = newstr.substring(start,end);
         str = str.replace(external+newstr+"}","");
-        System.out.println(str);
         return value;
     }
     String assistants() {
