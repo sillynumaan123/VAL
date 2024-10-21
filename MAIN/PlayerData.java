@@ -4,10 +4,8 @@ import java.io.*;
 public class PlayerData {
     static String str;
     static int teamId1, teamId2;
-    public record Data(int num, String name, String agent) {}
-    List<Data> abc = List.to(
-        new Data(1, "TYL Scales", "JETT")
-    );
+    public record Player(int num, String name, String agent) {}
+    List<Player> PLAYERS = new ArrayList<>();
     public PlayerData(String abc) {
         str = abc;
         readPlayerList();
@@ -45,13 +43,17 @@ public class PlayerData {
         DataReader dr = new DataReader(str.substring(start));
         teamId1 = dr.keytoValue("{\"teamId\": {\"value\": ");
         teamId2 = dr.keytoValue("{\"teamId\": {\"value\": ");
-        start = str.indexOf("\"players\": [");
+        start = str.indexOf("\"players\": [")+"\"players\": [".length();
         int end = str.indexOf("]",start);
-        
-        /*for(int i = 0;i<10;i++) {
-            String selectedAgent = dr.largeKeytoValue("\"selectedAgent\": ", "\"guid\": \"").toString();
-            String displayName = dr.keyValue("\"displayName\": \"").toString();
-            PLAYERS.add(new Data(i+1, displayName, selectedAgent));
-        }*/
+        String newstr = str.substring(start-1,end+1);
+        System.out.println(newstr);
+        String[] playerDataArray = newstr.split("\\},\\s*\\{");
+        for (String playerData : playerDataArray) {
+            int num = Integer.parseInt(playerData.replaceAll(".*\"playerId\": \\{\"value\": ", "").replaceAll("\\}.*", ""));
+            String name = playerData.replaceAll(".*\"displayName\": \"", "").replaceAll("\",.*", "");
+            String agent = playerData.replaceAll(".*\"guid\": \"", "").replaceAll("\",.*", "");
+            PLAYERS.add(new Player(num, name, AgentGUIDmap.get(agent.toLowerCase())));
+        }
+        System.out.println(PLAYERS);
     }
 }

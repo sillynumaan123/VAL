@@ -49,7 +49,7 @@ public class DataReader {
         else if(str.indexOf("}",start)==-1) end = str.indexOf("\"",start);
         else end = str.indexOf("\"",start)>str.indexOf("}",start)?str.indexOf("}",start):str.indexOf("\"",start);
         String value = str.substring(start,end);
-        str = str.replace(key+value,"");
+        str = str.replaceFirst(key+value,"");
         return value;
         
     }
@@ -70,6 +70,7 @@ public class DataReader {
         else end = newstr.indexOf("\"",start)>newstr.indexOf("}",start)?newstr.indexOf("}",start):newstr.indexOf("\"",start);
         String value = newstr.substring(start,end);
         str = str.replace(external+newstr+"}","");
+        System.out.println(str);
         return value;
     }
     String assistants() {
